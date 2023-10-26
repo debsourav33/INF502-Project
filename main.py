@@ -97,7 +97,10 @@ def file_input():
         try:
             with open(file_seq1,"r") as file:
                 lines = file.readlines()
-                sequence_one = lines[0][:-1] #trim the new line
+                if len(lines) == 0:
+                    print('File must contain the DNA sequence!')
+                else:
+                    sequence_one = lines[0][:-1] #trim the new line
                 #find_match_by_shifting_seq2(sequence_one,sequence_two,max_shift,chain=True)
         except FileNotFoundError:
             print(f"The file {file_seq1} doesn't exist!")
@@ -108,7 +111,10 @@ def file_input():
         try:
             with open(file_seq2,"r") as file:
                 lines = file.readlines()
-                sequence_two = lines[0][:-1] #trim the new line
+                if len(lines) == 0:
+                    print('File must contain the DNA sequence!')
+                else:
+                    sequence_two = lines[0][:-1] #trim the new line
                 #find_match_by_shifting_seq2(sequence_one,sequence_two,max_shift,chain=True)
         except FileNotFoundError:
             print(f"The file {file_seq2} doesn't exist!")
