@@ -1,7 +1,7 @@
-# INF502 Project: DNA Sequence Matching {#inf502-project-dna-sequence-matching}
+# INF502 Project: DNA Sequence Matching
 
 Table of Contents
-- [INF502 Project: DNA Sequence Matching {#inf502-project-dna-sequence-matching}](#inf502-project-dna-sequence-matching-inf502-project-dna-sequence-matching)
+- [INF502 Project: DNA Sequence Matching](#inf502-project-dna-sequence-matching)
 	- [Features](#features)
 	- [Implementation](#implementation)
 		- [Input](#input)
