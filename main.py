@@ -11,7 +11,7 @@ def print_stat(seq1, seq2, score, comparison, shift, chain=False):
     if chain:
         print(f'Score (longest chain): {score}')
     else:
-        print(f'Score (highest matches): {score}')
+        print(f'Score (no. of matches): {score}')
     print('')
 
 #length is the minimum length of seq1 or seq2 after shifting either of them (and inserting " " in the shifted cells)
@@ -140,9 +140,10 @@ def console_input():
 
     return sequence_1, sequence_2
 
-def menu():
+def menu_input():
+    print('')
     print("Hello! Welcome to DNA Sequence Matching Program :-)")    
-    
+
     print('')
     print("How do you want to input the pair of sequence?")
     print('')
@@ -151,7 +152,11 @@ def menu():
 
     while input_choice!=1 and input_choice!=2:
         try:
-            input_choice = int(input("Enter 1 for console input, 2 for file input: "))
+            print('')
+            print('Console Input    (1)')
+            print('File Input       (2)')
+            print('')
+            input_choice = int(input())
             if input_choice!=1 and input_choice!=2:
                 print('The options are 1 or 2!')
         except ValueError:
@@ -166,15 +171,18 @@ def menu():
     sequence1 = sequence1.upper()
     sequence2 = sequence2.upper()
 
-    print("Next, let's insert the maximum no. of shifts you would want the sequences to have.")
-    print('')
-
     max_shift = -1
     min_length = min(len(sequence1), len(sequence2))
 
+    print("How much maximum shifts do you want?")
+
     while max_shift < 0:
         try:
-            max_shift = int(input("Enter a positive number as the maximum shift or enter 0 for auto adjustment (= length of smallest sequence): "))
+            print('')
+            print('Auto adjustment (= length of smallest sequence)       (0)')
+            print('Custom Counts                                         (Any Positive Number)')
+            print('')
+            max_shift = int(input())
             if max_shift < 0:
                 print('Max shift count must be non-negative!')
             elif max_shift == 0 or max_shift > min_length:
@@ -188,47 +196,102 @@ def menu():
 
     return max_shift, sequence1, sequence2
 
+def menu_operation():
+    print('')
+    print('Which operation do you want to perform?')
+    print('')
+
+    opt = -1
+
+    while opt<0 or opt>5:
+        print('')
+        print('Find the highest no. of matches without shifting        (1)')
+        print('Find the longest contiguous chain without shifting      (2)')
+        print('Find the highest no. of matches with shifts done        (3)')
+        print('Find the longest contiguous chain with shifts done      (4)')
+        print('Exit                                                    (0)')
+        print('')
+
+        try:
+            opt = int(input())
+
+            if opt <0 or opt>4:
+                print('')
+                print('Please pick an option between 0 and 4')
+                print('')
+        except ValueError:
+                opt = -1
+                print('Please enter an integer number between 0 and 4')
+
+    return opt
+
 def main():
-    max_shift, sequence_one, sequence_two = menu()
+    max_shift, sequence_one, sequence_two = menu_input()
     
+
     print("---------------------------")
-    print("The pair of sequences:")
+    print("The pair of sequences:\n")
     print(sequence_one)
     print(sequence_two)
     print("---------------------------")
 
 
-    print('')
-    print('Trying to find pairwise alignments without any shifting')
-    print('')
+    opt = menu_operation()
 
-    #Calculate and print back the count of matches without any shifts done as well as if there is any chained sequences present (display them seperatly)
-    no_shift_match = find_match_by_shifting_seq1(sequence_one, sequence_two, max_shift=0)
-    no_shift_chain = find_match_by_shifting_seq1(sequence_one, sequence_two, max_shift=0, chain=True)
+    while opt != 0:
+        if opt == 1:
+            print('')
+            print('Trying to find pairwise alignments without any shifting')
+            print('')
 
-    print('')
-    print(f'Highest no. of matches without shifting: {no_shift_match}')
-    print(f'Length of longest contiguous chain without shifting: {no_shift_chain}')
-    print('')
+            #Calculate and print back the count of matches without any shifts done
+            no_shift_match = find_match_by_shifting_seq1(sequence_one, sequence_two, max_shift=0)
 
-    #Calculate and print back the chain after shifts done with maximum score from sequences
-    
-    print('')
-    print('Trying to find pairwise alignments with shifting')
-    print('')
+            print('')
+            print(f'Highest no. of matches without shifting: {no_shift_match}')
+            print('')
 
-    shift_seq1_match = find_match_by_shifting_seq1(sequence_one, sequence_two, max_shift= max_shift, min_shift=1)
-    shift_seq2_match = find_match_by_shifting_seq2(sequence_one, sequence_two, max_shift= max_shift, min_shift=1)
-    max_match = max(shift_seq1_match, shift_seq2_match)
+        if opt == 2:
+            print('')
+            print('Trying to find longest contiguous chain without any shifting')
+            print('')
 
-    #Calculate and print back the maximum contiguous chain (after shifts done ) from sequences
-    shift_seq1_chain = find_match_by_shifting_seq1(sequence_one, sequence_two, max_shift= max_shift, min_shift=1, chain=True)
-    shift_seq2_chain = find_match_by_shifting_seq2(sequence_one, sequence_two, max_shift= max_shift, min_shift=1, chain=True)
-    longest_chain = max(shift_seq1_chain, shift_seq2_chain)
+            no_shift_chain = find_match_by_shifting_seq1(sequence_one, sequence_two, max_shift=0, chain=True)
 
-    print('')
-    print(f'Highest no. of match across all possible shifting: {max_match}')
-    print(f'Length of longest contiguous chain across all posibble shifting: {longest_chain}')
-    print('')
+            print('')
+            print(f'Length of longest contiguous chain without shifting: {no_shift_chain}')
+            print('')
+
+        if opt == 3:
+            #Calculate and print back the chain after shifts done with maximum score from sequences
+            print('')
+            print('Trying to find pairwise alignments with shifting')
+            print('')
+
+            shift_seq1_match = find_match_by_shifting_seq1(sequence_one, sequence_two, max_shift= max_shift, min_shift=1)
+            shift_seq2_match = find_match_by_shifting_seq2(sequence_one, sequence_two, max_shift= max_shift, min_shift=1)
+            max_match = max(shift_seq1_match, shift_seq2_match)
+
+            print('')
+            print(f'Highest no. of matches across all possible shifting: {max_match}')
+            print('')
+
+        if opt == 4:
+
+            print('')
+            print('Trying to find longest contiguous chain with shifting')
+            print('')
+
+            #Calculate and print back the maximum contiguous chain (after shifts done ) from sequences
+            shift_seq1_chain = find_match_by_shifting_seq1(sequence_one, sequence_two, max_shift= max_shift, min_shift=1, chain=True)
+            shift_seq2_chain = find_match_by_shifting_seq2(sequence_one, sequence_two, max_shift= max_shift, min_shift=1, chain=True)
+            longest_chain = max(shift_seq1_chain, shift_seq2_chain)
+
+            print('')
+            print(f'Length of longest contiguous chain across all posibble shifting: {longest_chain}')
+            print('')
+
+
+        opt = menu_operation()
 
 main()
