@@ -84,6 +84,18 @@ def find_match_by_shifting_seq2(seq1, seq2, max_shift, min_shift = 0, chain = Fa
         #print(f'For shift {shift}, score: {score}')
     return max_score
 
+def pre_process(sequence):
+    nucleos = ['A','C','T','G','H']
+    sequence = sequence.upper()
+
+    processed = ''
+
+    for char in sequence:
+        if char in nucleos:
+            processed += char
+        
+    return processed
+
 def file_input():
     sequence_one = ''
     sequence_two = ''
@@ -101,7 +113,10 @@ def file_input():
                     print('File must contain the DNA sequence!')
                 else:
                     sequence_one = lines[0][:-1] #trim the new line
-                #find_match_by_shifting_seq2(sequence_one,sequence_two,max_shift,chain=True)
+                    sequence_one = pre_process(sequence_one)
+                    if sequence_one=='':
+                        print('Sequence must contain atleast one nucleotyde')
+                
         except FileNotFoundError:
             print(f"The file {file_seq1} doesn't exist!")
 
@@ -115,7 +130,10 @@ def file_input():
                     print('File must contain the DNA sequence!')
                 else:
                     sequence_two = lines[0][:-1] #trim the new line
-                #find_match_by_shifting_seq2(sequence_one,sequence_two,max_shift,chain=True)
+                    sequence_two = pre_process(sequence_two)
+                    if sequence_two=='':
+                        print('Sequence must contain atleast one nucleotyde')
+                
         except FileNotFoundError:
             print(f"The file {file_seq2} doesn't exist!")
 
@@ -129,11 +147,13 @@ def console_input():
     print('')
     while sequence_1 == '':
         sequence_1 = input("Enter the first sequence: ").strip()
+        sequence_1 = pre_process(sequence_1)
         if sequence_1 == '':
             print('Sequence must have atleast one nucleotide')
 
     while sequence_2 == '':
         sequence_2 = input("Enter the second sequence: ").strip()
+        sequence_2 = pre_process(sequence_2)
         if sequence_2== '':
             print('Sequence must have atleast one nucleotide')
     print('')
@@ -167,10 +187,12 @@ def menu_input():
     else:
         sequence1, sequence2 = file_input()
 
-
-    sequence1 = sequence1.upper()
-    sequence2 = sequence2.upper()
-
+    print("---------------------------")
+    print("The pair of sequences:\n")
+    print(sequence1)
+    print(sequence2)
+    print("---------------------------")
+    
     max_shift = -1
     min_length = min(len(sequence1), len(sequence2))
 
@@ -227,14 +249,6 @@ def menu_operation():
 
 def main():
     max_shift, sequence_one, sequence_two = menu_input()
-    
-
-    print("---------------------------")
-    print("The pair of sequences:\n")
-    print(sequence_one)
-    print(sequence_two)
-    print("---------------------------")
-
 
     opt = menu_operation()
 
