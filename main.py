@@ -45,13 +45,17 @@ def find_chain(seq1,seq2,length, shift):
                 longest_chain = match
         else:
             match = 0
-
-    comparison = ' ' * chain_start_idx + seq1[chain_start_idx : chain_start_idx+longest_chain]
+    
+    chain_seq = seq1[chain_start_idx : chain_start_idx+longest_chain]
+    comparison = ' ' * chain_start_idx + chain_seq
     print_stat(seq1,seq2,longest_chain,comparison,shift, chain=True)
-    return longest_chain
+    
+    return longest_chain,chain_seq
 
 def find_match_by_shifting_seq1(seq1, seq2, max_shift, min_shift = 0, chain = False):
     max_score = 0
+    longest_chain = ""
+
     for shift in range(min_shift,max_shift+1):
         shifted_seq1 = ' ' * shift + seq1
 
@@ -59,16 +63,22 @@ def find_match_by_shifting_seq1(seq1, seq2, max_shift, min_shift = 0, chain = Fa
         
         #chain or subsequence?
         if chain:
-            score = find_chain(shifted_seq1,seq2,smaller_length, shift)    
+            score, chain_seq = find_chain(shifted_seq1,seq2,smaller_length, shift)
+            if len(chain_seq) > len(longest_chain):
+                longest_chain = chain_seq
         else:
             score = find_match(shifted_seq1,seq2,smaller_length, shift)
         max_score = max(max_score, score)
 
         #print(f'For shift {shift}, score: {score}')
+    if chain:
+        return max_score, longest_chain        
     return max_score
 
 def find_match_by_shifting_seq2(seq1, seq2, max_shift, min_shift = 0, chain = False):
     max_score = 0
+    longest_chain = ""
+
     for shift in range(min_shift,max_shift+1):
         shifted_seq2 = " " * shift + seq2
 
@@ -76,12 +86,17 @@ def find_match_by_shifting_seq2(seq1, seq2, max_shift, min_shift = 0, chain = Fa
         
         #chain or subsequence?
         if chain:
-            score = find_chain(seq1, shifted_seq2,smaller_length, shift)
+            score, chain_seq = find_chain(seq1, shifted_seq2,smaller_length, shift)
+            if len(chain_seq) > len(longest_chain):
+                longest_chain = chain_seq
         else:
             score = find_match(seq1, shifted_seq2,smaller_length, shift)
         max_score = max(max_score, score)
 
         #print(f'For shift {shift}, score: {score}')
+    
+    if chain:
+        return max_score, longest_chain       
     return max_score
 
 def pre_process(sequence):
@@ -270,10 +285,10 @@ def main():
             print('Trying to find longest contiguous chain without any shifting')
             print('')
 
-            no_shift_chain = find_match_by_shifting_seq1(sequence_one, sequence_two, max_shift=0, chain=True)
+            score, chain = find_match_by_shifting_seq1(sequence_one, sequence_two, max_shift=0, chain=True)
 
             print('')
-            print(f'Length of longest contiguous chain without shifting: {no_shift_chain}')
+            print(f'Longest contiguous chain without shifting: "{chain}"')
             print('')
 
         if opt == 3:
@@ -282,27 +297,31 @@ def main():
             print('Trying to find pairwise alignments with shifting')
             print('')
 
-            shift_seq1_match = find_match_by_shifting_seq1(sequence_one, sequence_two, max_shift= max_shift, min_shift=1)
+            shift_seq1_match = find_match_by_shifting_seq1(sequence_one, sequence_two, max_shift= max_shift, min_shift=0)
             shift_seq2_match = find_match_by_shifting_seq2(sequence_one, sequence_two, max_shift= max_shift, min_shift=1)
             max_match = max(shift_seq1_match, shift_seq2_match)
 
             print('')
-            print(f'Highest no. of matches across all possible shifting: {max_match}')
+            print(f'Highest no. of matches across all possible shifts: {max_match}')
             print('')
 
         if opt == 4:
 
             print('')
-            print('Trying to find longest contiguous chain with shifting')
+            print('Trying to find longest contiguous chain with shifts')
             print('')
 
             #Calculate and print back the maximum contiguous chain (after shifts done ) from sequences
-            shift_seq1_chain = find_match_by_shifting_seq1(sequence_one, sequence_two, max_shift= max_shift, min_shift=1, chain=True)
-            shift_seq2_chain = find_match_by_shifting_seq2(sequence_one, sequence_two, max_shift= max_shift, min_shift=1, chain=True)
-            longest_chain = max(shift_seq1_chain, shift_seq2_chain)
+            shift_seq1_chain, chain_1 = find_match_by_shifting_seq1(sequence_one, sequence_two, max_shift= max_shift, min_shift=0, chain=True)
+            shift_seq2_chain, chain_2 = find_match_by_shifting_seq2(sequence_one, sequence_two, max_shift= max_shift, min_shift=0, chain=True)
+            
+            if len(chain_1) > len(chain_2):
+                longest_chain = chain_1
+            else:
+                longest_chain = chain_2
 
             print('')
-            print(f'Length of longest contiguous chain across all posibble shifting: {longest_chain}')
+            print(f'Longest contiguous chain across all posibble shifts: "{longest_chain}"')
             print('')
 
 
