@@ -202,14 +202,15 @@ def menu_input():
     else:
         sequence1, sequence2 = file_input()
 
-    print("---------------------------")
+    print("\n---------------------------")
     print("The pair of sequences:\n")
     print(sequence1)
     print(sequence2)
-    print("---------------------------")
+    print("---------------------------\n")
     
     max_shift = -1
     min_length = min(len(sequence1), len(sequence2))
+
 
     print("How much maximum shifts do you want?")
 
